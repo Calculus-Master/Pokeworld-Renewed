@@ -1,6 +1,7 @@
 package com.github.calculusmaster.pokeworld;
 
 import com.github.calculusmaster.pokeworld.commands.CommandManager;
+import com.github.calculusmaster.pokeworld.db.DatabaseManager;
 import com.github.calculusmaster.pokeworld.listeners.CommandListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
@@ -30,6 +31,7 @@ public class Pokeworld
 
 		BOT = builder.build().awaitReady();
 
+		Pokeworld.initialize(DatabaseManager::init, "DatabaseManager");
 		Pokeworld.initialize(CommandManager::init, "CommandManager");
 
 		long end = System.nanoTime();

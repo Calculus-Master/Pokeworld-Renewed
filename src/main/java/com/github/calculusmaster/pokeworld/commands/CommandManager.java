@@ -32,7 +32,9 @@ public final class CommandManager
 
 	public enum CommandEntry
 	{
-		START(StartCommand::new, Commands.slash("start", "Start your Pokemon adventure!")),
+		START(StartCommand::new, Commands
+				.slash("start", "Start your Pokemon adventure!")
+		),
 
 		;
 
