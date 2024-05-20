@@ -18,6 +18,8 @@ public class Pokeworld
 
 	public static void main(String[] args) throws InterruptedException
 	{
+		long start = System.nanoTime();
+
 		ENV = Dotenv.load();
 
 		JDABuilder builder = JDABuilder
@@ -28,12 +30,18 @@ public class Pokeworld
 		BOT = builder.build().awaitReady();
 
 		Pokeworld.initialize(CommandManager::init, "CommandManager");
+
+		long end = System.nanoTime();
+
+		LOGGER.info("Bot initialization complete! (Time: {} ms)", (end - start) / 1000000.);
 	}
 
 	private static void initialize(Runnable initializer, String system)
 	{
 		LOGGER.info("Starting initialization: {}", system);
+		long start = System.nanoTime();
 		initializer.run();
-		LOGGER.info("Finished initialization: {}", system);
+		long end = System.nanoTime();
+		LOGGER.info("Finished initialization: {} (Time: {} ms)", system, (end - start) / 1000000.);
 	}
 }
