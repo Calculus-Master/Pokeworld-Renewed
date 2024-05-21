@@ -7,8 +7,7 @@ import java.util.function.Function;
 
 public record CommandData(
 		Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor,
-		SlashCommandData slashCommandData,
-		boolean devOnly
+		boolean devOnly, SlashCommandData slashCommandData
 )
 {
 

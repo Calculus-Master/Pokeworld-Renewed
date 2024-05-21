@@ -26,8 +26,8 @@ public abstract class PokeworldCommand
 	// Logic
 
 	public abstract boolean execute(SlashCommandInteractionEvent event);
-	public abstract void handleAutocomplete(CommandAutoCompleteInteractionEvent event);
 
+	public void handleAutocomplete(CommandAutoCompleteInteractionEvent event) {};
 	public boolean handleButton(ButtonInteractionEvent event) { return false; }
 	public boolean handleModal(ModalInteractionEvent event) { return false; }
 

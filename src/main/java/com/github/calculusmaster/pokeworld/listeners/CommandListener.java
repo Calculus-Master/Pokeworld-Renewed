@@ -31,7 +31,7 @@ public class CommandListener extends ListenerAdapter
 			else result = CommandManager.COMMANDS.get(name).constructor().apply(event).execute(event);
 
 			long end = System.nanoTime();
-			LOGGER.info("Executed slash command: {} (Result: {}, Time: {} ms)", name, result, (end - start) / 1000000.);
+			LOGGER.info("Executed slash command: {} ({} | Time: {} ms)", name, result ? "Succeeded" : "Failed", (end - start) / 1000000.);
 		}
 		else LOGGER.warn("Received unknown slash command: {}", name);
 	}

@@ -47,4 +47,21 @@ public class Pokeworld
 		long end = System.nanoTime();
 		LOGGER.info("Finished initialization: {} (Time: {} ms)", system, (end - start) / 1000000.);
 	}
+
+	public static void shutdown()
+	{
+		BOT.shutdown();
+
+		try
+		{
+			BOT.awaitShutdown();
+
+			LOGGER.info("Bot has successfully shutdown.");
+			System.exit(0);
+		} catch (InterruptedException e)
+		{
+			LOGGER.error("Failed to shutdown the bot.", e);
+			System.exit(1);
+		}
+	}
 }

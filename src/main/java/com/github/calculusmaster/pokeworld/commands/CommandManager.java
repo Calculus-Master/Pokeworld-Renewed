@@ -1,6 +1,7 @@
 package com.github.calculusmaster.pokeworld.commands;
 
 import com.github.calculusmaster.pokeworld.Pokeworld;
+import com.github.calculusmaster.pokeworld.commands.logic.ShutdownCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.StartCommand;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -37,17 +38,20 @@ public final class CommandManager
 				.slash("start", "Start your Pokemon adventure!")
 				.addOption(OptionType.STRING, "starter", "The starter Pokemon you choose. Use this command without this option to see your choices.", false)
 		),
+		SHUTDOWN(ShutdownCommand::new, true, Commands
+				.slash("shutdown", "[Developer only] Shuts down the bot.")
+		)
 
 		;
 
 		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, SlashCommandData data)
 		{
-			this(constructor, data, false);
+			this(constructor, false, data);
 		}
 
-		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, SlashCommandData data, boolean devOnly)
+		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, boolean devOnly, SlashCommandData data)
 		{
-			COMMANDS.put(data.getName(), new CommandData(constructor, data, devOnly));
+			COMMANDS.put(data.getName(), new CommandData(constructor, devOnly, data));
 		}
 	}
 }
