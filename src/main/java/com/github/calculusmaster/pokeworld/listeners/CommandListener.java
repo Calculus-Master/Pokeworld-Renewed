@@ -1,5 +1,7 @@
 package com.github.calculusmaster.pokeworld.listeners;
 
+import com.github.calculusmaster.pokeworld.Pokeworld;
+import com.github.calculusmaster.pokeworld.commands.CommandData;
 import com.github.calculusmaster.pokeworld.commands.CommandManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,7 +23,12 @@ public class CommandListener extends ListenerAdapter
 			long start = System.nanoTime();
 			LOGGER.info("Parsing slash command: {}", name);
 
-			boolean result = CommandManager.COMMANDS.get(name).constructor().apply(event).execute(event);
+			CommandData data = CommandManager.COMMANDS.get(name);
+			boolean result = false;
+
+			if(data.devOnly() && !event.getUser().getId().equals(Pokeworld.ENV.get("DEVELOPER_ID")))
+				event.reply("[Error] This command is only available for the developer.").queue();
+			else result = CommandManager.COMMANDS.get(name).constructor().apply(event).execute(event);
 
 			long end = System.nanoTime();
 			LOGGER.info("Executed slash command: {} (Result: {}, Time: {} ms)", name, result, (end - start) / 1000000.);

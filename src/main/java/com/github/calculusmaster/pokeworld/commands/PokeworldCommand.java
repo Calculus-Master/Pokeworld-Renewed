@@ -35,7 +35,7 @@ public abstract class PokeworldCommand
 
 	protected boolean error(IReplyCallback callback, String message)
 	{
-		callback.reply(message).setEphemeral(true).queue();
+		callback.reply("[Error] " + message).setEphemeral(true).queue();
 		return false;
 	}
 }

@@ -42,7 +42,12 @@ public final class CommandManager
 
 		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, SlashCommandData data)
 		{
-			COMMANDS.put(data.getName(), new CommandData(constructor, data));
+			this(constructor, data, false);
+		}
+
+		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, SlashCommandData data, boolean devOnly)
+		{
+			COMMANDS.put(data.getName(), new CommandData(constructor, data, devOnly));
 		}
 	}
 }
