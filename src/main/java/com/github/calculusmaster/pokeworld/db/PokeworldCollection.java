@@ -48,4 +48,11 @@ public class PokeworldCollection
 		LOGGER.info("DB Get -> {} | Query: {} | Data: {}", this.name, query, data);
 		return data;
 	}
+
+	public boolean contains(Bson query)
+	{
+		boolean result = this.collection.countDocuments(query) != 0;
+		LOGGER.info("DB Contains -> {} | Query: {} | Result: {}", this.name, query, result);
+		return result;
+	}
 }

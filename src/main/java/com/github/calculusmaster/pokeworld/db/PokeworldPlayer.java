@@ -2,9 +2,15 @@ package com.github.calculusmaster.pokeworld.db;
 
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PokeworldPlayer
 {
+	private static final ExecutorService UPDATER = Executors.newVirtualThreadPerTaskExecutor();
+
 	//Object creation
 
 	public static PokeworldPlayer add(String userID, String username)
@@ -33,10 +39,18 @@ public class PokeworldPlayer
 		return new PokeworldPlayer(data);
 	}
 
+	public static boolean exists(String userID)
+	{
+		if(CacheManager.PLAYER.getIfPresent(userID) != null) return true;
+		else return DatabaseManager.PLAYER.contains(Filters.eq("user_id", userID));
+	}
+
 	private PokeworldPlayer(String userID, String name)
 	{
 		this.userID = userID;
 		this.name = name;
+
+		this.query = Filters.eq("user_id", this.userID);
 	}
 
 	private PokeworldPlayer(Document data)
@@ -44,13 +58,32 @@ public class PokeworldPlayer
 		this(data.getString("user_id"), data.getString("name"));
 	}
 
-	//Data
-	private final String userID;
-	private final String name;
+	//Mongo
+	private final Bson query;
 
 	public Document serialize()
 	{
 		return new Document("user_id", this.userID)
 				.append("name", this.name);
+	}
+
+	private void update(Bson update)
+	{
+		CacheManager.PLAYER.invalidate(this.userID);
+		UPDATER.submit(() -> DatabaseManager.PLAYER.update(this.query, update));
+	}
+
+	//Data
+	private final String userID;
+	private final String name;
+
+	public String getUserID()
+	{
+		return this.userID;
+	}
+
+	public String getName()
+	{
+		return this.name;
 	}
 }

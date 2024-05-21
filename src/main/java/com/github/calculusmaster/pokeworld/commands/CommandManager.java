@@ -3,7 +3,8 @@ package com.github.calculusmaster.pokeworld.commands;
 import com.github.calculusmaster.pokeworld.Pokeworld;
 import com.github.calculusmaster.pokeworld.commands.logic.StartCommand;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.slf4j.Logger;
@@ -34,11 +35,12 @@ public final class CommandManager
 	{
 		START(StartCommand::new, Commands
 				.slash("start", "Start your Pokemon adventure!")
+				.addOption(OptionType.STRING, "starter", "The starter Pokemon you choose. Use this command without this option to see your choices.", false)
 		),
 
 		;
 
-		CommandEntry(Function<GenericCommandInteractionEvent, ? extends PokeworldCommand> constructor, SlashCommandData data)
+		CommandEntry(Function<GenericInteractionCreateEvent, ? extends PokeworldCommand> constructor, SlashCommandData data)
 		{
 			COMMANDS.put(data.getName(), new CommandData(constructor, data));
 		}

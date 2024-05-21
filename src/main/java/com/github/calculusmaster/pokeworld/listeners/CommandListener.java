@@ -21,10 +21,10 @@ public class CommandListener extends ListenerAdapter
 			long start = System.nanoTime();
 			LOGGER.info("Parsing slash command: {}", name);
 
-			CommandManager.COMMANDS.get(name).constructor().apply(event).execute(event);
+			boolean result = CommandManager.COMMANDS.get(name).constructor().apply(event).execute(event);
 
 			long end = System.nanoTime();
-			LOGGER.info("Executed slash command: {} (Time: {} ms)", name, (end - start) / 1000000.);
+			LOGGER.info("Executed slash command: {} (Result: {}, Time: {} ms)", name, result, (end - start) / 1000000.);
 		}
 		else LOGGER.warn("Received unknown slash command: {}", name);
 	}
