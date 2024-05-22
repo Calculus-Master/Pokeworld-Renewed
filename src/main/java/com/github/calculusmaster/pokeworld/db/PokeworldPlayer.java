@@ -1,6 +1,7 @@
 package com.github.calculusmaster.pokeworld.db;
 
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -51,11 +52,15 @@ public class PokeworldPlayer
 		this.name = name;
 
 		this.query = Filters.eq("user_id", this.userID);
+
+		this.credits = 0;
 	}
 
 	private PokeworldPlayer(Document data)
 	{
 		this(data.getString("user_id"), data.getString("name"));
+
+		this.credits = data.getInteger("credits", 0);
 	}
 
 	//Mongo
@@ -69,7 +74,7 @@ public class PokeworldPlayer
 
 	private void update(Bson update)
 	{
-		CacheManager.PLAYER.invalidate(this.userID);
+		CacheManager.PLAYER.put(this.userID, this.serialize());
 		UPDATER.submit(() -> DatabaseManager.PLAYER.update(this.query, update));
 	}
 
@@ -77,6 +82,9 @@ public class PokeworldPlayer
 	private final String userID;
 	private final String name;
 
+	private int credits;
+
+	// Fixed members
 	public String getUserID()
 	{
 		return this.userID;
@@ -85,5 +93,27 @@ public class PokeworldPlayer
 	public String getName()
 	{
 		return this.name;
+	}
+
+	// Credits
+	public int getCredits()
+	{
+		return this.credits;
+	}
+
+	private void changeCredits(int amount)
+	{
+		this.credits = Math.max(0, this.credits + amount);
+		this.update(Updates.set("credits", this.credits));
+	}
+
+	public void addCredits(int amount)
+	{
+		this.changeCredits(amount);
+	}
+
+	public void removeCredits(int amount)
+	{
+		this.changeCredits(-amount);
 	}
 }

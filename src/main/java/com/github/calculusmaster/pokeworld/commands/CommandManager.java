@@ -1,6 +1,7 @@
 package com.github.calculusmaster.pokeworld.commands;
 
 import com.github.calculusmaster.pokeworld.Pokeworld;
+import com.github.calculusmaster.pokeworld.commands.logic.CreditsCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.ShutdownCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.StartCommand;
 import net.dv8tion.jda.api.entities.Guild;
@@ -40,7 +41,10 @@ public final class CommandManager
 		),
 		SHUTDOWN(ShutdownCommand::new, true, Commands
 				.slash("shutdown", "[Developer only] Shuts down the bot.")
-		)
+		),
+		CREDITS(CreditsCommand::new, Commands
+				.slash("credits", "Check how many credits you have.")
+		),
 
 		;
 

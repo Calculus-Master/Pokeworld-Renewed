@@ -1,5 +1,6 @@
 package com.github.calculusmaster.pokeworld.commands;
 
+import com.github.calculusmaster.pokeworld.db.PokeworldPlayer;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -8,6 +9,9 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public abstract class PokeworldCommand
 {
@@ -32,6 +36,12 @@ public abstract class PokeworldCommand
 	public boolean handleModal(ModalInteractionEvent event) { return false; }
 
 	// Utilities
+
+	@NotNull
+	protected PokeworldPlayer getPlayer()
+	{
+		return Objects.requireNonNull(PokeworldPlayer.get(this.user.getId()));
+	}
 
 	protected boolean error(IReplyCallback callback, String message)
 	{
