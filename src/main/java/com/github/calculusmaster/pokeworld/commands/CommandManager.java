@@ -29,7 +29,6 @@ public final class CommandManager
 		LOGGER.info("Initializing {} commands...", CommandEntry.values().length);
 
 		Guild testServer = Objects.requireNonNull(Pokeworld.BOT.getGuildById(Pokeworld.ENV.get("TEST_SERVER_ID")));
-		testServer.updateCommands().addCommands().queue();
 		testServer.updateCommands().addCommands(COMMANDS.values().stream().map(CommandData::slashCommandData).toList()).queue();
 
 		LOGGER.info("Successfully registered {} commands.", COMMANDS.size());

@@ -10,5 +10,8 @@ public record CommandData(
 		boolean devOnly, SlashCommandData slashCommandData
 )
 {
-
+	public boolean isStart()
+	{
+		return this.slashCommandData().getName().equals("start");
+	}
 }
