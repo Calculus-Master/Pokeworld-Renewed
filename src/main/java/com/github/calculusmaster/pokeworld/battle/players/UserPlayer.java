@@ -14,7 +14,7 @@ public class UserPlayer extends AbstractPlayer
 	@Override
 	public String getID()
 	{
-		return this.player.getUserID();
+		return this.player.getID();
 	}
 
 	@Override

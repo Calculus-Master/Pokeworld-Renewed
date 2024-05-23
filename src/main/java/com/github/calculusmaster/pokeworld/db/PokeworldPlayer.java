@@ -81,7 +81,7 @@ public class PokeworldPlayer
 	private int credits;
 
 	// Fixed members
-	public String getUserID()
+	public String getID()
 	{
 		return this.userID;
 	}

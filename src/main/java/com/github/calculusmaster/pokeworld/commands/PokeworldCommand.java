@@ -48,4 +48,9 @@ public abstract class PokeworldCommand
 		callback.reply("[Error] " + message).setEphemeral(true).queue();
 		return false;
 	}
+
+	protected boolean error(IReplyCallback callback)
+	{
+		return this.error(callback, "An unknown error occurred. Please report this to the developer using /feedback.");
+	}
 }

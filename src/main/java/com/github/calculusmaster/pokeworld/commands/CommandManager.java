@@ -1,6 +1,7 @@
 package com.github.calculusmaster.pokeworld.commands;
 
 import com.github.calculusmaster.pokeworld.Pokeworld;
+import com.github.calculusmaster.pokeworld.commands.logic.BattleCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.CreditsCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.ShutdownCommand;
 import com.github.calculusmaster.pokeworld.commands.logic.StartCommand;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,17 @@ public final class CommandManager
 				.slash("shutdown", "[Developer only] Shuts down the bot.")
 		),
 		CREDITS(CreditsCommand::new, Commands
-				.slash("credits", "Check how many credits you have.")
+				.slash("credits", "Check how many credits you have!")
 		),
+		BATTLE(BattleCommand::new, Commands
+			.slash("battle", "Participate in Pokemon battles!")
+				.addSubcommands(
+						new SubcommandData("challenge", "Challenge other players to a battle. You can challenge up to 3 other players!")
+								.addOption(OptionType.USER, "player2", "A player you want to challenge", true)
+								.addOption(OptionType.USER, "player3", "A player you want to challenge", false)
+								.addOption(OptionType.USER, "player4", "A player you want to challenge", false)
+				)
+		)
 
 		;
 

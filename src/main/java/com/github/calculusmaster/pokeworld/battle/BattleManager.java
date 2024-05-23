@@ -29,20 +29,13 @@ public final class BattleManager
 		return ACTIVE_REQUESTS.containsKey(playerID);
 	}
 
-	public static boolean isRequestReady(String playerID)
+	public static BattleRequest getRequest(String playerID)
 	{
 		assert BattleManager.hasRequest(playerID);
-		return ACTIVE_REQUESTS.get(playerID).isReady();
+		return ACTIVE_REQUESTS.get(playerID);
 	}
 
-	public static void acceptRequest(String playerID)
-	{
-		assert BattleManager.hasRequest(playerID);
-		BattleRequest request = ACTIVE_REQUESTS.get(playerID);
-		request.setAccepted(playerID);
-	}
-
-	public static void denyRequest(String playerID)
+	public static void removeRequest(String playerID)
 	{
 		assert BattleManager.hasRequest(playerID);
 		ACTIVE_REQUESTS.remove(playerID);
@@ -51,7 +44,7 @@ public final class BattleManager
 	// Battles
 	public static AbstractPokemonBattle create(String player1ID)
 	{
-		assert BattleManager.isRequestReady(player1ID);
+		assert BattleManager.getRequest(player1ID).isReady();
 		BattleRequest request = ACTIVE_REQUESTS.get(player1ID);
 
 		List<PokeworldPlayer> players = new ArrayList<>();
