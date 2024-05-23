@@ -26,44 +26,75 @@ public class BattleCommand extends PokeworldCommand
 		String sub = Objects.requireNonNull(event.getSubcommandName());
 		PokeworldPlayer player = this.getPlayer();
 
-		if(sub.equals("challenge"))
+		switch(sub)
 		{
-			// Verify that the initiator isn't already in a battle
-			if(BattleManager.isInBattle(player.getID())) return this.error(event, "You are already in another battle.");
-			else if(BattleManager.hasRequest(player.getID()))
+			case "challenge" ->
 			{
+				// Verify that the initiator isn't already in a battle
+				if(BattleManager.isInBattle(player.getID()))
+					return this.error(event, "You are already in another battle.");
+				else if(BattleManager.hasRequest(player.getID()))
+				{
+					BattleRequest request = BattleManager.getRequest(player.getID());
+
+					return request.isInitiator(player.getID())
+							? this.error(event, "You have already initiated a battle request. Please wait for the other players to accept, or cancel it using `/battle cancel`.")
+							: this.error(event, "You already have a pending battle request. Use `/battle accept` or `/battle deny` to respond to it.");
+				}
+
+				// Verify that challengers aren't already in a battle, and aggregate them
+				// Player 2 is required, the others are optional
+				List<String> requested = new ArrayList<>();
+
+				final String inBattleError = "The player %s is already in another battle.";
+
+				OptionMapping player2 = Objects.requireNonNull(event.getOption("player2"));
+				if(BattleManager.isInBattle(player2.getAsUser().getId()))
+					return this.error(event, inBattleError.formatted(player2.getAsUser().getName()));
+				else requested.add(player2.getAsUser().getId());
+
+				OptionMapping player3 = event.getOption("player3");
+				if(player3 != null && BattleManager.isInBattle(player3.getAsUser().getId()))
+					return this.error(event, inBattleError.formatted(player3.getAsUser().getName()));
+				else if(player3 != null) requested.add(player3.getAsUser().getId());
+
+				OptionMapping player4 = event.getOption("player4");
+				if(player4 != null && BattleManager.isInBattle(player4.getAsUser().getId()))
+					return this.error(event, inBattleError.formatted(player4.getAsUser().getName()));
+				else if(player4 != null) requested.add(player4.getAsUser().getId());
+
+				// Create the battle request
+				BattleManager.createRequest(player.getID(), requested);
+
+				// Notify players
+				event.reply("%s: You have been challenged to a battle by %s! Use `/battle accept` or `/battle deny` to respond.".formatted(requested.stream().map("<@%s>"::formatted).collect(Collectors.joining(", ")), this.user.getAsMention())).queue();
+			}
+			case "accept" ->
+			{
+				if(BattleManager.isInBattle(player.getID()))
+					return this.error(event, "You are already in another battle.");
+				else if(!BattleManager.hasRequest(player.getID()))
+					return this.error(event, "You do not have any pending battle requests.");
+
 				BattleRequest request = BattleManager.getRequest(player.getID());
 
-				return request.isInitiator(player.getID())
-						? this.error(event, "You have already initiated a battle request. Please wait for the other players to accept, or cancel it using `/battle cancel`.")
-						: this.error(event, "You already have a pending battle request. Use `/battle accept` or `/battle deny` to respond to it.");
+				if(request.isInitiator(player.getID()))
+					return this.error(event, "You cannot accept your own battle request.");
+				else if(request.hasAccepted(player.getID()))
+					return this.error(event, "You have already accepted this battle request.");
+
+				request.setAccepted(player.getID());
+
+				event.reply("You have accepted the battle request! Waiting for the other players to accept...").queue();
 			}
-
-			// Verify that challengers aren't already in a battle, and aggregate them
-			// Player 2 is required, the others are optional
-			List<String> requested = new ArrayList<>();
-
-			final String inBattleError = "The player %s is already in another battle.";
-
-			OptionMapping player2 = Objects.requireNonNull(event.getOption("player2"));
-			if(BattleManager.isInBattle(player2.getAsUser().getId())) return this.error(event, inBattleError.formatted(player2.getAsUser().getName()));
-			else requested.add(player2.getAsUser().getId());
-
-			OptionMapping player3 = event.getOption("player3");
-			if(player3 != null && BattleManager.isInBattle(player3.getAsUser().getId())) return this.error(event, inBattleError.formatted(player3.getAsUser().getName()));
-			else if(player3 != null) requested.add(player3.getAsUser().getId());
-
-			OptionMapping player4 = event.getOption("player4");
-			if(player4 != null && BattleManager.isInBattle(player4.getAsUser().getId())) return this.error(event, inBattleError.formatted(player4.getAsUser().getName()));
-			else if(player4 != null) requested.add(player4.getAsUser().getId());
-
-			// Create the battle request
-			BattleManager.createRequest(player.getID(), requested);
-
-			// Notify players
-			event.reply("%s: You have been challenged to a battle by %s! Use `/battle accept` or `/battle deny` to respond.".formatted(requested.stream().map("<@%s>"::formatted).collect(Collectors.joining(", ")), this.user.getAsMention())).queue();
+			case "deny" ->
+			{
+			}
+			default ->
+			{
+				return this.error(event);
+			}
 		}
-		else return this.error(event);
 
 		return true;
 	}

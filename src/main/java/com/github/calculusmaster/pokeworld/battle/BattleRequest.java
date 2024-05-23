@@ -30,6 +30,11 @@ public class BattleRequest
 		return this.accepted.size() == this.requested.size();
 	}
 
+	public boolean hasAccepted(String playerID)
+	{
+		return this.accepted.contains(playerID);
+	}
+
 	public boolean isInitiator(String playerID)
 	{
 		return this.initiator.equals(playerID);

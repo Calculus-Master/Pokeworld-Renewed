@@ -52,7 +52,8 @@ public final class CommandManager
 						new SubcommandData("challenge", "Challenge other players to a battle. You can challenge up to 3 other players!")
 								.addOption(OptionType.USER, "player2", "A player you want to challenge", true)
 								.addOption(OptionType.USER, "player3", "A player you want to challenge", false)
-								.addOption(OptionType.USER, "player4", "A player you want to challenge", false)
+								.addOption(OptionType.USER, "player4", "A player you want to challenge", false),
+						new SubcommandData("accept", "Accept a battle request from another player.")
 				)
 		)
 
