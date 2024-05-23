@@ -1,17 +1,13 @@
 package com.github.calculusmaster.pokeworld.db;
 
+import com.github.calculusmaster.pokeworld.util.ThreadManager;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class PokeworldPlayer
 {
-	private static final ExecutorService UPDATER = Executors.newVirtualThreadPerTaskExecutor();
-
 	//Object creation
 
 	public static PokeworldPlayer add(String userID, String username)
@@ -75,7 +71,7 @@ public class PokeworldPlayer
 	private void update(Bson update)
 	{
 		CacheManager.PLAYER.put(this.userID, this.serialize());
-		UPDATER.submit(() -> DatabaseManager.PLAYER.update(this.query, update));
+		ThreadManager.DB_UPDATER.submit(() -> DatabaseManager.PLAYER.update(this.query, update));
 	}
 
 	//Data

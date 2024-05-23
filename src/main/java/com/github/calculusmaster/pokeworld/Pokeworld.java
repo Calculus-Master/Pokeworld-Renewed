@@ -3,6 +3,7 @@ package com.github.calculusmaster.pokeworld;
 import com.github.calculusmaster.pokeworld.commands.CommandManager;
 import com.github.calculusmaster.pokeworld.db.DatabaseManager;
 import com.github.calculusmaster.pokeworld.listeners.CommandListener;
+import com.github.calculusmaster.pokeworld.util.ThreadManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -54,6 +55,8 @@ public class Pokeworld
 
 		try
 		{
+			ThreadManager.shutdown();
+
 			BOT.awaitShutdown();
 
 			LOGGER.info("Bot has successfully shutdown.");
