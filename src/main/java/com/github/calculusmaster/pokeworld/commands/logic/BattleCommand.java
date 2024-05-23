@@ -53,7 +53,11 @@ public class BattleCommand extends PokeworldCommand
 					else
 					{
 						User targetUser = playerOption.getAsUser();
-						if(BattleManager.isInBattle(targetUser.getId()))
+						if(targetUser.getId().equals(player.getID()))
+							return this.error(event, "You cannot challenge yourself.");
+						else if(targetUser.isBot())
+							return this.error(event, "You cannot challenge a bot.");
+						else if(BattleManager.isInBattle(targetUser.getId()))
 							return this.error(event, "The player %s is already in another battle.".formatted(targetUser.getName()));
 						else if(!PokeworldPlayer.exists(targetUser.getId()))
 							return this.error(event, "The player %s has not started their adventure yet. Ask them to use `/start` to begin!".formatted(targetUser.getName()));
