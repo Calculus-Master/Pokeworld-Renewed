@@ -1,4 +1,4 @@
-package com.github.calculusmaster.pokeworld.duel;
+package com.github.calculusmaster.pokeworld.battle;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
