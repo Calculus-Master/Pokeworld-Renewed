@@ -4,6 +4,7 @@ import com.github.calculusmaster.pokeworld.battle.BattleManager;
 import com.github.calculusmaster.pokeworld.battle.BattleRequest;
 import com.github.calculusmaster.pokeworld.commands.PokeworldCommand;
 import com.github.calculusmaster.pokeworld.db.PokeworldPlayer;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BattleCommand extends PokeworldCommand
@@ -46,22 +48,24 @@ public class BattleCommand extends PokeworldCommand
 				// Player 2 is required, the others are optional
 				List<String> requested = new ArrayList<>();
 
-				final String inBattleError = "The player %s is already in another battle.";
+				final Function<OptionMapping, Boolean> checkPlayer = playerOption -> {
+					if(playerOption == null) return true; // Optional so return true
+					else
+					{
+						User targetUser = playerOption.getAsUser();
+						if(BattleManager.isInBattle(targetUser.getId()))
+							return this.error(event, "The player %s is already in another battle.".formatted(targetUser.getName()));
+						else if(!PokeworldPlayer.exists(targetUser.getId()))
+							return this.error(event, "The player %s has not started their adventure yet. Ask them to use `/start` to begin!".formatted(targetUser.getName()));
+						else requested.add(targetUser.getId());
+					}
 
-				OptionMapping player2 = Objects.requireNonNull(event.getOption("player2"));
-				if(BattleManager.isInBattle(player2.getAsUser().getId()))
-					return this.error(event, inBattleError.formatted(player2.getAsUser().getName()));
-				else requested.add(player2.getAsUser().getId());
+					return true;
+				};
 
-				OptionMapping player3 = event.getOption("player3");
-				if(player3 != null && BattleManager.isInBattle(player3.getAsUser().getId()))
-					return this.error(event, inBattleError.formatted(player3.getAsUser().getName()));
-				else if(player3 != null) requested.add(player3.getAsUser().getId());
-
-				OptionMapping player4 = event.getOption("player4");
-				if(player4 != null && BattleManager.isInBattle(player4.getAsUser().getId()))
-					return this.error(event, inBattleError.formatted(player4.getAsUser().getName()));
-				else if(player4 != null) requested.add(player4.getAsUser().getId());
+				if(!checkPlayer.apply(Objects.requireNonNull(event.getOption("player2")))) return false;
+				if(!checkPlayer.apply(event.getOption("player3"))) return false;
+				if(!checkPlayer.apply(event.getOption("player4"))) return false;
 
 				// Create the battle request
 				BattleManager.createRequest(player.getID(), requested);
